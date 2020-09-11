@@ -35,6 +35,14 @@ class ErrorLayout {
         includeParent.visibility = (View.VISIBLE)
     }
 
+    fun showThenClose(onclose : ()->Unit) {
+        includeParent.visibility = (View.VISIBLE)
+        ok.setOnClickListener{
+            this.hide()
+            onclose.invoke()
+        }
+    }
+
     fun hide() {
         includeParent.visibility = (View.GONE)
     }

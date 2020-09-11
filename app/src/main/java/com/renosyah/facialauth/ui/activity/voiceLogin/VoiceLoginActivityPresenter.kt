@@ -1,10 +1,14 @@
 package com.renosyah.facialauth.ui.activity.voiceLogin
 
+import android.content.Intent
 import com.renosyah.facialauth.model.Student
 import com.renosyah.facialauth.service.RetrofitService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.concurrent.schedule
 
 class VoiceLoginActivityPresenter  : VoiceLoginActivityContract.Presenter {
 

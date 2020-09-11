@@ -5,4 +5,6 @@
     <string name="try_again">Try Again</string>
     <string name="something_wrong">Something wrong happend</string>
     <string name="close">Close</string>
+    <string name="loading">Loading...</string>
+    <string name="validating">Validating...</string>
 </resources>

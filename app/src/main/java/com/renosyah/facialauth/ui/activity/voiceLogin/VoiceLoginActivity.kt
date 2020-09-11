@@ -15,6 +15,7 @@ import com.renosyah.facialauth.R
 import com.renosyah.facialauth.di.component.DaggerActivityComponent
 import com.renosyah.facialauth.di.module.ActivityModule
 import com.renosyah.facialauth.model.Student
+import com.renosyah.facialauth.ui.activity.facialLogin.FacialLoginActivity
 import com.renosyah.facialauth.ui.util.ErrorLayout
 import com.renosyah.facialauth.ui.util.LoadingLayout
 import kotlinx.android.synthetic.main.activity_voice_login.*
@@ -22,20 +23,19 @@ import net.gotev.speech.GoogleVoiceTypingDisabledException
 import net.gotev.speech.Speech
 import net.gotev.speech.SpeechDelegate
 import net.gotev.speech.SpeechRecognitionNotAvailable
+import java.util.*
 import javax.inject.Inject
+import kotlin.concurrent.schedule
 
 
-class VoiceLoginActivity : AppCompatActivity(),VoiceLoginActivityContract.View {
+class VoiceLoginActivity : AppCompatActivity(), VoiceLoginActivityContract.View {
 
     @Inject
     lateinit var presenter: VoiceLoginActivityContract.Presenter
 
-    val MY_PERMISSIONS_REQUEST_MICROPHONE = 122
-
     lateinit var context: Context
     lateinit var loading :LoadingLayout
     lateinit var error : ErrorLayout
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,10 +63,7 @@ class VoiceLoginActivity : AppCompatActivity(),VoiceLoginActivityContract.View {
         speak_buttton.setOnClickListener {
             startSpeak()
         }
-
-        requestMicrophonePermission { v ->
-            enableSpeakButton(v)
-        }
+        enableSpeakButton(true)
     }
 
     private fun startSpeak(){
@@ -87,8 +84,12 @@ class VoiceLoginActivity : AppCompatActivity(),VoiceLoginActivityContract.View {
 
                 override fun onSpeechResult(result: String) {
                     val value = result.replace("\\s".toRegex(), "")
-                    presenter.getOneStudent(value,true)
-                    enableSpeakButton(true)
+                    nim_textview.text = value
+                    Timer().schedule(2000){
+                        runOnUiThread {
+                            presenter.getOneStudent(value,true)
+                        }
+                    }
                 }
             })
 
@@ -105,8 +106,8 @@ class VoiceLoginActivity : AppCompatActivity(),VoiceLoginActivityContract.View {
         speak_buttton.setTextColor(ContextCompat.getColor(context,R.color.colorPrimary))
 
         if (!enable){
-            speak_buttton.setBackgroundColor(ContextCompat.getColor(context,R.color.colorAccent))
-            speak_buttton.setTextColor(ContextCompat.getColor(context,android.R.color.white))
+            speak_buttton.setBackgroundColor(ContextCompat.getColor(context,android.R.color.darker_gray))
+            speak_buttton.setTextColor(ContextCompat.getColor(context,R.color.colorAccent))
         }
 
         speak_buttton.isEnabled = enable
@@ -114,7 +115,10 @@ class VoiceLoginActivity : AppCompatActivity(),VoiceLoginActivityContract.View {
 
 
     override fun onGetOneStudent(s: Student) {
-        Toast.makeText(context,Gson().toJson(s).toString(),Toast.LENGTH_LONG).show()
+        val i = Intent(context,FacialLoginActivity::class.java)
+        i.putExtra("student",s)
+        startActivity(i)
+        finish()
     }
 
     override fun showProgressOnGetOneStudent(show: Boolean) {
@@ -122,26 +126,9 @@ class VoiceLoginActivity : AppCompatActivity(),VoiceLoginActivityContract.View {
     }
 
     override fun showErrorOnGetOneStudent(e: String) {
+        enableSpeakButton(true)
         error.setMessage(e)
         error.show()
-    }
-
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == MY_PERMISSIONS_REQUEST_MICROPHONE) {
-            startActivity(Intent(context, VoiceLoginActivity::class.java))
-            finish()
-        }
-    }
-
-    private fun requestMicrophonePermission(next: (Boolean)->Unit) {
-        if (ContextCompat.checkSelfPermission( context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ) {
-            next.invoke(false)
-            ActivityCompat.requestPermissions( (context as Activity),  arrayOf( Manifest.permission.RECORD_AUDIO), MY_PERMISSIONS_REQUEST_MICROPHONE )
-        } else {
-            next.invoke(true)
-        }
     }
 
     override fun onDestroy() {
@@ -157,6 +144,4 @@ class VoiceLoginActivity : AppCompatActivity(),VoiceLoginActivityContract.View {
 
         listcomponent.inject(this)
     }
-
-
 }

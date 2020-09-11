@@ -9,12 +9,15 @@ android {
 
     defaultConfig {
         applicationId "com.renosyah.facialauth"
-        minSdkVersion 18
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     buildTypes {
@@ -23,6 +26,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 dependencies {
@@ -35,7 +39,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-// retrofit + gson
+    // retrofit + gson
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
@@ -65,6 +69,15 @@ dependencies {
 
     // speech to text
     implementation 'net.gotev:speech:1.4.0'
+
+    // camera x
+    implementation "androidx.camera:camera-camera2:1.0.0-beta08"
+    implementation "androidx.camera:camera-lifecycle:1.0.0-beta08"
+    implementation "androidx.camera:camera-view:1.0.0-alpha15"
+
+    // face detection
+    implementation 'com.google.mlkit:face-detection:16.0.2'
+
 }
 kapt {
     generateStubs = true
