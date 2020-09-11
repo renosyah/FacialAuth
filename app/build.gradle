@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.renosyah.facialauth"
-        minSdkVersion 16
+        minSdkVersion 18
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -62,6 +62,10 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
+
+    // speech to text
+    implementation 'net.gotev:speech:1.4.0'
+
 }
 kapt {
     generateStubs = true

@@ -3,6 +3,8 @@ import dagger.Module
 import dagger.Provides
 import android.app.Activity
 import com.renosyah.facialauth.service.RetrofitService
+import com.renosyah.facialauth.ui.activity.voiceLogin.VoiceLoginActivityContract
+import com.renosyah.facialauth.ui.activity.voiceLogin.VoiceLoginActivityPresenter
 
 @Module
 class ActivityModule(private var activity : Activity) {
@@ -17,4 +19,8 @@ class ActivityModule(private var activity : Activity) {
     }
 
     // add for each new activity
+    @Provides
+    fun provideVoiceLoginActivityPresenter(): VoiceLoginActivityContract.Presenter {
+        return VoiceLoginActivityPresenter()
+    }
 }
