@@ -5,15 +5,18 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.gson.Gson
 import com.renosyah.facialauth.R
 import com.renosyah.facialauth.di.component.DaggerActivityComponent
 import com.renosyah.facialauth.di.module.ActivityModule
 import com.renosyah.facialauth.model.Student
+import com.renosyah.facialauth.ui.util.ErrorLayout
+import com.renosyah.facialauth.ui.util.LoadingLayout
 import kotlinx.android.synthetic.main.activity_voice_login.*
 import net.gotev.speech.GoogleVoiceTypingDisabledException
 import net.gotev.speech.Speech
@@ -27,8 +30,12 @@ class VoiceLoginActivity : AppCompatActivity(),VoiceLoginActivityContract.View {
     @Inject
     lateinit var presenter: VoiceLoginActivityContract.Presenter
 
-    lateinit var context: Context
     val MY_PERMISSIONS_REQUEST_MICROPHONE = 122
+
+    lateinit var context: Context
+    lateinit var loading :LoadingLayout
+    lateinit var error : ErrorLayout
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,12 +50,19 @@ class VoiceLoginActivity : AppCompatActivity(),VoiceLoginActivityContract.View {
         presenter.attach(this)
         presenter.subscribe()
 
-        Speech.init(context, packageName);
+        Speech.init(context, packageName)
+
+        loading = LoadingLayout(context,loading_layout)
+        loading.setMessage(getString(R.string.login_message))
+        loading.hide()
+
+        error = ErrorLayout(context,error_layout)
+        error.setMessage(getString(R.string.something_wrong))
+        error.hide()
 
         speak_buttton.setOnClickListener {
             startSpeak()
         }
-        speak_buttton.isEnabled = false
 
         requestMicrophonePermission { v ->
             enableSpeakButton(v)
@@ -57,6 +71,7 @@ class VoiceLoginActivity : AppCompatActivity(),VoiceLoginActivityContract.View {
 
     private fun startSpeak(){
         try {
+
             Speech.getInstance().startListening(object : SpeechDelegate {
                 override fun onStartOfSpeech() {
                     enableSpeakButton(false)
@@ -71,10 +86,12 @@ class VoiceLoginActivity : AppCompatActivity(),VoiceLoginActivityContract.View {
                 }
 
                 override fun onSpeechResult(result: String) {
-                    nim_textview.text = result
+                    val value = result.replace("\\s".toRegex(), "")
+                    presenter.getOneStudent(value,true)
                     enableSpeakButton(true)
                 }
             })
+
         } catch (exc: SpeechRecognitionNotAvailable) {
 
         } catch (exc: GoogleVoiceTypingDisabledException) {
@@ -97,15 +114,16 @@ class VoiceLoginActivity : AppCompatActivity(),VoiceLoginActivityContract.View {
 
 
     override fun onGetOneStudent(s: Student) {
-
+        Toast.makeText(context,Gson().toJson(s).toString(),Toast.LENGTH_LONG).show()
     }
 
     override fun showProgressOnGetOneStudent(show: Boolean) {
-
+        loading.setVisibility(show)
     }
 
-    override fun showErrorOnGetOneStudent(error: String) {
-
+    override fun showErrorOnGetOneStudent(e: String) {
+        error.setMessage(e)
+        error.show()
     }
 
 
@@ -119,11 +137,13 @@ class VoiceLoginActivity : AppCompatActivity(),VoiceLoginActivityContract.View {
 
     private fun requestMicrophonePermission(next: (Boolean)->Unit) {
         if (ContextCompat.checkSelfPermission( context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ) {
+            next.invoke(false)
             ActivityCompat.requestPermissions( (context as Activity),  arrayOf( Manifest.permission.RECORD_AUDIO), MY_PERMISSIONS_REQUEST_MICROPHONE )
         } else {
             next.invoke(true)
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         presenter.unsubscribe()

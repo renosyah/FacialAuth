@@ -6,48 +6,57 @@
     android:layout_height="match_parent"
     tools:context=".ui.activity.voiceLogin.VoiceLoginActivity">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:gravity="bottom"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:layout_weight="1"
             android:orientation="vertical"
+            android:gravity="bottom"
             android:layout_width="match_parent"
-            android:gravity="center"
-            android:layout_height="0dp">
+            android:layout_height="match_parent">
 
-            <ImageView
-                android:src="@drawable/microphone"
+            <LinearLayout
+                android:layout_weight="1"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"/>
+                android:gravity="center"
+                android:layout_height="0dp">
 
-            <TextView
-                android:id="@+id/nim_textview"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="24sp"
-                android:layout_marginTop="20dp"
-                android:text=""
-                android:textAlignment="center"
+                <ImageView
+                    android:src="@drawable/microphone"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"/>
+
+            </LinearLayout>
+
+            <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal" />
+                android:padding="20dp"
+                android:id="@+id/speak_buttton"
+                android:text="@string/speak"
+                android:textSize="20sp"
+                android:background="@color/colorPrimaryDark"
+                android:textColor="@color/colorPrimary"
+                android:textAllCaps="false" />
 
         </LinearLayout>
 
-        <Button
+        <include
+            android:id="@+id/loading_layout"
+            layout="@layout/loading_data_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="20dp"
-            android:id="@+id/speak_buttton"
-            android:text="@string/speak"
-            android:textSize="20sp"
-            android:background="@color/colorPrimaryDark"
-            android:textColor="@color/colorPrimary"
-            android:textAllCaps="false" />
+            android:layout_height="match_parent"
+            tools:visibility="gone" />
 
-    </LinearLayout>
+        <include
+            android:id="@+id/error_layout"
+            layout="@layout/error_message_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:visibility="gone" />
+
+    </FrameLayout>
 
 </LinearLayout>

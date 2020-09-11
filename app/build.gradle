@@ -65,7 +65,6 @@ dependencies {
 
     // speech to text
     implementation 'net.gotev:speech:1.4.0'
-
 }
 kapt {
     generateStubs = true

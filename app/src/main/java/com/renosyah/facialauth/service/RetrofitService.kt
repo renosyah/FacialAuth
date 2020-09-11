@@ -14,7 +14,7 @@ interface RetrofitService {
 
     companion object {
 
-        val baseURL = "http://192.168.23.1:8000/"
+        val baseURL = "http://192.168.1.10:8000/"
 
         fun create() : RetrofitService {
             val retrofit = Retrofit.Builder()
