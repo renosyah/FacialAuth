@@ -4,15 +4,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.FileUtils
 import android.util.Size
 import android.view.Surface
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
-import androidx.camera.core.AspectRatio.RATIO_4_3
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import androidx.exifinterface.media.ExifInterface
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
@@ -27,6 +26,7 @@ import com.renosyah.facialauth.ui.activity.voiceLogin.VoiceLoginActivity
 import com.renosyah.facialauth.ui.util.ErrorLayout
 import com.renosyah.facialauth.ui.util.LoadingLayout
 import com.renosyah.facialauth.util.ImageRotation.Companion.getStreamByteFromImage
+import com.renosyah.facialauth.util.SerializableSave
 import kotlinx.android.synthetic.main.activity_facial_login.*
 import kotlinx.android.synthetic.main.activity_voice_login.error_layout
 import kotlinx.android.synthetic.main.activity_voice_login.loading_layout
@@ -34,6 +34,7 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
@@ -52,6 +53,7 @@ class FacialLoginActivity : AppCompatActivity(), FacialLoginActivityContract.Vie
     lateinit var student : Student
     lateinit var detector : FaceDetector
     private var imageCapture: ImageCapture? = null
+    private var captured = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,7 +107,7 @@ class FacialLoginActivity : AppCompatActivity(), FacialLoginActivityContract.Vie
                 }
 
             imageCapture = ImageCapture.Builder()
-                .setTargetResolution(Size(1080,1080))
+                .setTargetResolution(Size(480,480))
                 .setTargetRotation(Surface.ROTATION_0)
                 .build()
 
@@ -141,7 +143,12 @@ class FacialLoginActivity : AppCompatActivity(), FacialLoginActivityContract.Vie
                         imageProxy.close()
                         return@addOnSuccessListener
                     }
-                    takePhoto()
+
+                    if (!captured){
+                        takePhoto()
+                        captured = true
+                    }
+
                 }
                 .addOnFailureListener { e ->
                     imageProxy.close()
@@ -151,10 +158,10 @@ class FacialLoginActivity : AppCompatActivity(), FacialLoginActivityContract.Vie
 
     private fun uploadImage(f : File){
 
-        val requestFile = RequestBody.create(MediaType.parse("image/jpg"),getStreamByteFromImage(f))
+        val requestFile = RequestBody.create(MediaType.parse("image/*"),f)
         val file = MultipartBody.Part.createFormData("file", f.name, requestFile)
 
-        presenter.validateImageProfile(student.Nim,file,true)
+        presenter.validateImageProfile(student.Id,file,true)
     }
 
     private fun takePhoto() {
@@ -174,7 +181,11 @@ class FacialLoginActivity : AppCompatActivity(), FacialLoginActivityContract.Vie
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    uploadImage(photoFile)
+                    val byteF = getStreamByteFromImage(photoFile)
+                    FileOutputStream(photoFile).use { stream ->
+                        stream.write(byteF)
+                        uploadImage(photoFile)
+                    }
                 }
             })
     }
@@ -189,6 +200,7 @@ class FacialLoginActivity : AppCompatActivity(), FacialLoginActivityContract.Vie
 
     override fun onValidateImageProfile(v: ValidateResponse) {
         if (v.Validate){
+            SerializableSave(context, SerializableSave.userDataFileSessionName).save(student)
             val i = Intent(context,HomeActivity::class.java)
             startActivity(i)
             finish()

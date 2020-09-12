@@ -19,7 +19,7 @@ class ImageRotation {
             val imageRotation = getImageRotation(imageFile)
             if (imageRotation != 0) photoBitmap =
                 getBitmapRotatedByDegree(photoBitmap,imageRotation)
-            photoBitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream)
+            photoBitmap.compress(Bitmap.CompressFormat.JPEG, 25, stream)
             return stream.toByteArray()
         }
 

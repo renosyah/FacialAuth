@@ -10,7 +10,9 @@ import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.renosyah.facialauth.R
+import com.renosyah.facialauth.ui.activity.home.HomeActivity
 import com.renosyah.facialauth.ui.activity.voiceLogin.VoiceLoginActivity
+import com.renosyah.facialauth.util.SerializableSave
 import java.util.*
 import kotlin.concurrent.schedule
 
@@ -27,6 +29,13 @@ class SplashActivity : AppCompatActivity() {
 
     private fun initWidget() {
         this.context = this@SplashActivity
+
+        if (SerializableSave(context, SerializableSave.userDataFileSessionName).load() != null){
+            val i = Intent(context, HomeActivity::class.java)
+            startActivity(i)
+            finish()
+            return
+        }
 
         Timer().schedule(2000){
             requestPermission { v ->

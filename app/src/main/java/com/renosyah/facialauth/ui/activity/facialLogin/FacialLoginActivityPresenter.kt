@@ -16,11 +16,11 @@ class FacialLoginActivityPresenter : FacialLoginActivityContract.Presenter {
     private val api: RetrofitService = RetrofitService.create()
     private lateinit var view: FacialLoginActivityContract.View
 
-    override fun validateImageProfile(nim: String, file: MultipartBody.Part, enableLoading: Boolean) {
+    override fun validateImageProfile(id: String, file: MultipartBody.Part, enableLoading: Boolean) {
         if (enableLoading) {
             view.showProgressValidateImageProfile(true)
         }
-        val subscribe = api.validateImageProfile(nim,file)
+        val subscribe = api.validateImageProfile(id,file)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ result: ValidateResponse? ->

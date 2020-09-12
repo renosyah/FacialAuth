@@ -18,6 +18,6 @@ class FacialLoginActivityContract {
     interface Presenter: BaseContract.Presenter<View> {
 
         // add for request
-        fun validateImageProfile(nim : String, file: MultipartBody.Part, enableLoading : Boolean)
+        fun validateImageProfile(id : String, file: MultipartBody.Part, enableLoading : Boolean)
     }
 }
