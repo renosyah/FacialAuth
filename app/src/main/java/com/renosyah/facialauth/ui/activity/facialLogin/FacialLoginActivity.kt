@@ -23,6 +23,7 @@ import com.renosyah.facialauth.di.module.ActivityModule
 import com.renosyah.facialauth.model.Student
 import com.renosyah.facialauth.model.ValidateResponse
 import com.renosyah.facialauth.ui.activity.home.HomeActivity
+import com.renosyah.facialauth.ui.activity.voiceLogin.VoiceLoginActivity
 import com.renosyah.facialauth.ui.util.ErrorLayout
 import com.renosyah.facialauth.ui.util.LoadingLayout
 import com.renosyah.facialauth.util.ImageRotation.Companion.getStreamByteFromImage
@@ -73,7 +74,11 @@ class FacialLoginActivity : AppCompatActivity(), FacialLoginActivityContract.Vie
         loading.setMessage(getString(R.string.validating))
         loading.hide()
 
-        error = ErrorLayout(context,error_layout)
+        error = ErrorLayout(context,error_layout){
+            val i = Intent(context,VoiceLoginActivity::class.java)
+            startActivity(i)
+            finish()
+        }
         error.setMessage(getString(R.string.something_wrong))
         error.hide()
 
@@ -190,9 +195,7 @@ class FacialLoginActivity : AppCompatActivity(), FacialLoginActivityContract.Vie
             return
         }
         error.setMessage(v.Message)
-        error.showThenClose {
-            startCamera()
-        }
+        error.show()
     }
 
     override fun showProgressValidateImageProfile(show: Boolean) {

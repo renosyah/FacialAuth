@@ -12,15 +12,23 @@ class ErrorLayout {
     private lateinit var message: TextView
     private lateinit var ok :Button
 
-   constructor(c: Context, includeParent: View) {
+   constructor(c: Context, includeParent: View, onclick : ()->Unit) {
         this.c = c
         this.includeParent = includeParent
         message = this.includeParent.findViewById(R.id.error_message_text)
         ok = this.includeParent.findViewById(R.id.button_try_again)
         ok.setOnClickListener{
             this.hide()
+            onclick.invoke()
         }
         show()
+    }
+
+    fun setOnclick(onclick : ()->Unit){
+        ok.setOnClickListener{
+            this.hide()
+            onclick.invoke()
+        }
     }
 
     fun setMessage(m: String?) {
@@ -33,14 +41,6 @@ class ErrorLayout {
 
     fun show() {
         includeParent.visibility = (View.VISIBLE)
-    }
-
-    fun showThenClose(onclose : ()->Unit) {
-        includeParent.visibility = (View.VISIBLE)
-        ok.setOnClickListener{
-            this.hide()
-            onclose.invoke()
-        }
     }
 
     fun hide() {

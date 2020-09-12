@@ -56,7 +56,9 @@ class VoiceLoginActivity : AppCompatActivity(), VoiceLoginActivityContract.View 
         loading.setMessage(getString(R.string.login_message))
         loading.hide()
 
-        error = ErrorLayout(context,error_layout)
+        error = ErrorLayout(context,error_layout) {
+
+        }
         error.setMessage(getString(R.string.something_wrong))
         error.hide()
 
