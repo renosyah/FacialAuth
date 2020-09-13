@@ -1,5 +1,6 @@
 package com.renosyah.facialauth.ui.activity.facialLogin
 
+import android.net.DnsResolver
 import com.renosyah.facialauth.model.Student
 import com.renosyah.facialauth.model.ValidateResponse
 import com.renosyah.facialauth.service.RetrofitService
@@ -9,6 +10,8 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.Call
+import retrofit2.Response
 
 class FacialLoginActivityPresenter : FacialLoginActivityContract.Presenter {
 
@@ -38,6 +41,7 @@ class FacialLoginActivityPresenter : FacialLoginActivityContract.Presenter {
             })
 
         subscriptions.add(subscribe)
+
     }
 
     override fun subscribe() {

@@ -2,6 +2,7 @@ package com.renosyah.facialauth.service
 import com.renosyah.facialauth.model.Student
 import com.renosyah.facialauth.model.ValidateResponse
 import io.reactivex.Observable
+import okhttp3.Call
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -30,7 +31,6 @@ interface RetrofitService {
             val okHttpClient = OkHttpClient.Builder()
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(15, TimeUnit.SECONDS)
-                .connectTimeout(60, TimeUnit.SECONDS)
                 .build()
 
             val retrofit = Retrofit.Builder()

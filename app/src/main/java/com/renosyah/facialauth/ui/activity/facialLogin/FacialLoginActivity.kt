@@ -53,7 +53,6 @@ class FacialLoginActivity : AppCompatActivity(), FacialLoginActivityContract.Vie
     lateinit var student : Student
     lateinit var detector : FaceDetector
     private var imageCapture: ImageCapture? = null
-    private var captured = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,6 +107,7 @@ class FacialLoginActivity : AppCompatActivity(), FacialLoginActivityContract.Vie
 
             imageCapture = ImageCapture.Builder()
                 .setTargetResolution(Size(480,480))
+                .setMaxResolution(Size(480,480))
                 .setTargetRotation(Surface.ROTATION_0)
                 .build()
 
@@ -143,12 +143,7 @@ class FacialLoginActivity : AppCompatActivity(), FacialLoginActivityContract.Vie
                         imageProxy.close()
                         return@addOnSuccessListener
                     }
-
-                    if (!captured){
-                        takePhoto()
-                        captured = true
-                    }
-
+                    takePhoto()
                 }
                 .addOnFailureListener { e ->
                     imageProxy.close()
@@ -158,7 +153,7 @@ class FacialLoginActivity : AppCompatActivity(), FacialLoginActivityContract.Vie
 
     private fun uploadImage(f : File){
 
-        val requestFile = RequestBody.create(MediaType.parse("image/*"),f)
+        val requestFile = RequestBody.create(MediaType.parse("image/*"), f)
         val file = MultipartBody.Part.createFormData("file", f.name, requestFile)
 
         presenter.validateImageProfile(student.Id,file,true)
